@@ -1,10 +1,11 @@
 import tkinter as tk
 import numpy as np
+from PIL import Image, ImageTk
 
-xmax = 100
-ymax = 100
-cell_size = 5
-dt = 30
+xmax = 1500
+ymax = 1500
+cell_size = 1
+dt = 30  # milliseconds
 
 cells = np.zeros((xmax, ymax))
 cells[10,10] = 1
@@ -29,7 +30,7 @@ def rules(i,j):
     surround[4] = cells[j, i+1]
     surround[5:8] = cells[j+1,i-1:i+2]
     s = sum(surround)
-    if s<1 or s>5:
+    if s<1 or s>7:
         return 0
     return 1
 
@@ -59,9 +60,17 @@ def update_canvas():
             y2 = y1 + cell_size
             monCanvas.create_rectangle(x1, y1, x2, y2, fill="white" if cells[i,j]==0 else "black")
 
+def update_canvas_fast():
+    print(cells*255)
+    img =  ImageTk.PhotoImage(image=Image.fromarray(cells*255).resize((xmax*cell_size, ymax*cell_size)))
+    monCanvas.delete("all")
+    monCanvas.pack()
+    monCanvas.create_image(0,0, anchor="nw", image=img)
+    monCanvas.img = img  # Keep a reference to prevent garbage collection
+
 def update():
     update_cells_fast()
-    update_canvas()
+    update_canvas_fast()
     monCanvas.after(dt, update)
 
 update()
