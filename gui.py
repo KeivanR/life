@@ -1,20 +1,32 @@
 import tkinter as tk
 import numpy as np
 from PIL import Image, ImageTk
+from itertools import combinations
 
-xmax = 500
-ymax = 500
-cell_size = 1
-dt = 30  # milliseconds
+xmax = 200
+ymax = 200
+cell_size = 5
+dt = 15  # milliseconds
+
+combs = list(combinations(list(range(8)),2))
 
 cells = np.zeros((xmax, ymax))
-cells[xmax//2,ymax//2] = 1
+cells[xmax//2-5:xmax//2+5,ymax//2-5:ymax//2+5] = np.array([
+    [0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,1,0,0,0],
+    [0,0,0,0,0,0,1,0,0,0],
+    [0,0,1,1,1,1,1,0,0,0],
+    [0,0,1,1,1,1,1,0,0,0],
+    [0,0,0,0,0,1,1,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0],
+])
 
 fen_princ = tk.Tk()
 
 fen_princ.title("GAME OF LIFE")
-
-fen_princ.geometry("600x600")
 
 monCanvas = tk.Canvas(fen_princ, width=xmax*cell_size, height=ymax*cell_size, bg='ivory')
 
@@ -35,19 +47,22 @@ def rules(i,j):
     return 1
 
 def fast_rules():
-    sumcells = cells[2:,2:]
-    sumcells += cells[2:,1:-1]
-    sumcells += cells[2:,:-2]
-    sumcells += cells[1:-1,2:]
-    #sumcells += cells[1:-1,:-2]
-    #sumcells += cells[:-2,2:]
-    sumcells += cells[:-2,1:-1]
-    sumcells += cells[:-2,:-2]
+    # 1+6, 3+4 -> square
+    # 2+5, 0+7 -> hexagone
+    sumcells = np.zeros((cells.shape[0]-2,cells.shape[1]-2))
+    sumcells += cells[2:,2:] #0
+    sumcells += cells[2:,1:-1] #1
+    sumcells += cells[2:,:-2] #2
+    sumcells += cells[1:-1,2:] #3
+    sumcells += cells[1:-1,:-2] #4
+    sumcells += cells[:-2,2:] #5
+    sumcells += cells[:-2,1:-1] #6
+    sumcells += cells[:-2,:-2] #7
+
+
     cells[1:-1,1:-1][sumcells<2] = 0
-    cells[1:-1,1:-1][sumcells>5] = 0
-    # Set cells to 0 where the sum is between 2 and 5 (inclusive)
-    mask = (sumcells >= 1) & (sumcells <= 5)
-    cells[1:-1,1:-1][mask] = 1
+    cells[1:-1,1:-1][sumcells>3] = 0
+    cells[1:-1,1:-1][sumcells==3] = 1
 
 
 def update_cells():
