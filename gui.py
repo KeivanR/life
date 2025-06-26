@@ -2,13 +2,13 @@ import tkinter as tk
 import numpy as np
 from PIL import Image, ImageTk
 
-xmax = 1500
-ymax = 1500
+xmax = 500
+ymax = 500
 cell_size = 1
 dt = 30  # milliseconds
 
 cells = np.zeros((xmax, ymax))
-cells[10,10] = 1
+cells[xmax//2,ymax//2] = 1
 
 fen_princ = tk.Tk()
 
@@ -16,7 +16,7 @@ fen_princ.title("GAME OF LIFE")
 
 fen_princ.geometry("600x600")
 
-monCanvas = tk.Canvas(fen_princ, width=500, height=500, bg='ivory')
+monCanvas = tk.Canvas(fen_princ, width=xmax*cell_size, height=ymax*cell_size, bg='ivory')
 
 monCanvas.create_line(5,6,70,60, fill="orange")
 monCanvas.pack()
@@ -35,7 +35,14 @@ def rules(i,j):
     return 1
 
 def fast_rules():
-    sumcells = cells[2:,2:]+cells[2:,1:-1]+cells[2:,:-2]+cells[1:-1,2:]+cells[1:-1,:-2]+cells[:-2,2:]+cells[:-2,1:-1]+cells[:-2,:-2]
+    sumcells = cells[2:,2:]
+    sumcells += cells[2:,1:-1]
+    sumcells += cells[2:,:-2]
+    sumcells += cells[1:-1,2:]
+    #sumcells += cells[1:-1,:-2]
+    #sumcells += cells[:-2,2:]
+    sumcells += cells[:-2,1:-1]
+    sumcells += cells[:-2,:-2]
     cells[1:-1,1:-1][sumcells<2] = 0
     cells[1:-1,1:-1][sumcells>5] = 0
     # Set cells to 0 where the sum is between 2 and 5 (inclusive)
@@ -61,7 +68,6 @@ def update_canvas():
             monCanvas.create_rectangle(x1, y1, x2, y2, fill="white" if cells[i,j]==0 else "black")
 
 def update_canvas_fast():
-    print(cells*255)
     img =  ImageTk.PhotoImage(image=Image.fromarray(cells*255).resize((xmax*cell_size, ymax*cell_size)))
     monCanvas.delete("all")
     monCanvas.pack()
