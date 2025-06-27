@@ -3,26 +3,33 @@ import numpy as np
 from PIL import Image, ImageTk
 from itertools import combinations
 
-xmax = 200
-ymax = 200
-cell_size = 5
-dt = 15  # milliseconds
+xmax = 1000
+ymax = 1000
+cell_size = 1
+dt = 3  # milliseconds
 
 combs = list(combinations(list(range(8)),2))
 
 cells = np.zeros((xmax, ymax))
-cells[xmax//2-5:xmax//2+5,ymax//2-5:ymax//2+5] = np.array([
+
+shape = np.array([
     [0,0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,1,0,0,0],
-    [0,0,0,0,0,0,1,0,0,0],
+    [0,0,1,0,0,0,1,0,0,0],
     [0,0,1,1,1,1,1,0,0,0],
     [0,0,1,1,1,1,1,0,0,0],
-    [0,0,0,0,0,1,1,0,0,0],
+    [0,0,1,0,0,1,1,0,0,0],
     [0,0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,0],
 ])
+
+cells[xmax//2-5:xmax//2+5,ymax//2-5:ymax//2+5] = shape
+cells[xmax//3-5:xmax//3+5,ymax//2-5:ymax//2+5] = shape
+cells[xmax//3-5:xmax//3+5,ymax//5-5:ymax//5+5] = shape
+cells[xmax//4-5:xmax//4+5,ymax//5-5:ymax//5+5] = shape
+cells[xmax//5-5:xmax//5+5,ymax//5-5:ymax//5+5] = shape
 
 fen_princ = tk.Tk()
 
