@@ -11,7 +11,7 @@ dt = 15  # milliseconds
 
 combs = list(combinations(list(range(8)),2))
 
-cells = np.zeros((xmax, ymax))
+cells = np.zeros((xmax, ymax, 3))
 
 shape = np.array([
     [0,0,0,0,0,0,0,0,0,0],
@@ -26,6 +26,8 @@ shape = np.array([
     [0,0,0,0,0,0,0,0,0,0],
 ])
 
+shape = np.stack([shape]*3, -1)
+
 # Add the shape at various positions
 cells[xmax//2-5:xmax//2+5,ymax//2-5:ymax//2+5] = shape
 # cells[xmax//3-5:xmax//3+5,ymax//2-5:ymax//2+5] = shape
@@ -39,21 +41,21 @@ fen_princ.title("GAME OF LIFE")
 
 monCanvas = tk.Canvas(fen_princ, width=xmax*cell_size, height=ymax*cell_size, bg='ivory')
 
-def update_cells():
-    rules(cells)
+def update_cells(cells):
+    return rules(cells)
 
-def update_canvas():
-    img =  ImageTk.PhotoImage(image=Image.fromarray(cells*255).resize((xmax*cell_size, ymax*cell_size), Image.NEAREST))
+def update_canvas(cells):
+    img =  ImageTk.PhotoImage(image=Image.fromarray((cells*255).astype(np.uint8)).resize((xmax*cell_size, ymax*cell_size), Image.NEAREST))
     monCanvas.delete("all")
     monCanvas.pack()
     monCanvas.create_image(0,0, anchor="nw", image=img)
     monCanvas.img = img  # Keep a reference to prevent garbage collection
 
-def update():
-    update_cells()
-    update_canvas()
-    monCanvas.after(dt, update)
+def update(cells):
+    cells = update_cells(cells)
+    update_canvas(cells)
+    monCanvas.after(dt, update, cells)
 
-update()
+update(cells)
 
 fen_princ.mainloop()
