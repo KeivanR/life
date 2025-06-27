@@ -7,7 +7,7 @@ from utils import *
 xmax = 300
 ymax = 300
 cell_size = 3
-dt = 15  # milliseconds
+dt = 1  # milliseconds
 
 combs = list(combinations(list(range(8)),2))
 
@@ -26,12 +26,12 @@ shape = np.array([
     [0,0,0,0,0,0,0,0,0,0],
 ])
 
-shape = np.stack([shape]*3, -1)
+#shape = np.stack([shape]*3, -1)
 
 # Add the shape at various positions
-cells[xmax//2-5:xmax//2+5,ymax//2-5:ymax//2+5] = shape
-# cells[xmax//3-5:xmax//3+5,ymax//2-5:ymax//2+5] = shape
-# cells[xmax//3-5:xmax//3+5,ymax//5-5:ymax//5+5] = shape
+cells[xmax//2-5:xmax//2+5,ymax//2-5:ymax//2+5,0] = shape
+cells[xmax//3-5:xmax//3+5,ymax//2-5:ymax//2+5,1] = shape
+cells[xmax//3-5:xmax//3+5,ymax//5-5:ymax//5+5,2] = shape
 # cells[xmax//4-5:xmax//4+5,ymax//5-5:ymax//5+5] = shape
 # cells[xmax//5-5:xmax//5+5,ymax//5-5:ymax//5+5] = shape
 
